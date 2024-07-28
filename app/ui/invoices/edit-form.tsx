@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import { CustomerField, InvoiceForm } from '@/app/lib/definitions';
+import { CustomerField, InvoiceForm } from "@/app/lib/definitions";
 import {
   CheckIcon,
   ClockIcon,
   CurrencyDollarIcon,
   UserCircleIcon,
-} from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { Button } from '@/app/ui/button';
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { Button } from "@/app/ui/button";
+import { updateInvoice } from "@/app/lib/actions";
 
 export default function EditInvoiceForm({
   invoice,
@@ -17,8 +18,18 @@ export default function EditInvoiceForm({
   invoice: InvoiceForm;
   customers: CustomerField[];
 }) {
+  // 此处为什么需要 bind:
+  // 首先，在 Next.js 当中，form 的 action 属性可以接受一个字符串或一个函数。
+  // 当 action 为函数时，Next.js 会自动将 FormData 对象传递给该函数。
+  // FormData 的数据从哪里来的呢？
+  // 是通过解析 <form> 标签内部的所有 <input>、<select>、<textarea> 等元素的值，通过 name 属性来构建 FormData 对象。
+  // 但是我们查看下面的表单，发现只有三个属性：customerId、amount、status。
+  // 而如果需要更新 invoice，我们还需要传递一个其原本的 id。
+  // 那么这个时候，就可以通过 bind 来传递额外的参数，此处是将 invoice.id 当作第一个参数传递给 updateInvoice 函数。
+  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
+
   return (
-    <form>
+    <form action={updateInvoiceWithId}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
@@ -79,7 +90,7 @@ export default function EditInvoiceForm({
                   name="status"
                   type="radio"
                   value="pending"
-                  defaultChecked={invoice.status === 'pending'}
+                  defaultChecked={invoice.status === "pending"}
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                 />
                 <label
@@ -95,7 +106,7 @@ export default function EditInvoiceForm({
                   name="status"
                   type="radio"
                   value="paid"
-                  defaultChecked={invoice.status === 'paid'}
+                  defaultChecked={invoice.status === "paid"}
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                 />
                 <label

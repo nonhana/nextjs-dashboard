@@ -1,16 +1,21 @@
-import { CustomerField } from '@/app/lib/definitions';
-import Link from 'next/link';
+import { CustomerField } from "@/app/lib/definitions";
+import Link from "next/link";
 import {
   CheckIcon,
   ClockIcon,
   CurrencyDollarIcon,
   UserCircleIcon,
-} from '@heroicons/react/24/outline';
-import { Button } from '@/app/ui/button';
+} from "@heroicons/react/24/outline";
+import { Button } from "@/app/ui/button";
+import { createInvoice } from "@/app/lib/actions";
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
   return (
-    <form>
+    // 在 Next.js 中，对 <form> 的 action 属性进行了特殊处理，使其可以接受一个字符串或一个函数。
+    // 如果使用纯 React，action 一般只接受一个字符串，也就是提交表单的 URL。
+    // 在 Next.js 中，action 可以自动接收 FormData 对象，然后将其传递给 createInvoice 函数。
+    // 这也就被称为 Server Actions，因为它们只在服务端运行。实际上 Server Actions 创建了一个 POST 请求，携带 formData。
+    <form action={createInvoice}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
@@ -105,6 +110,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
         >
           Cancel
         </Link>
+        {/* 在 form 标签内部，使用 type="submit" 的 button 标签会触发表单的提交事件。*/}
         <Button type="submit">Create Invoice</Button>
       </div>
     </form>
